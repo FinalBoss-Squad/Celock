@@ -2,6 +2,11 @@
 
 Transform unwanted bot traffic into revenue streams using **HTTP 402 Payment Required** and blockchain micropayments. This demo platform showcases how publishers can gate their APIs and content behind Web3 payments, allowing bots to pay for access in real-time.
 
+## Tx Hashes:
+ - https://celoscan.io/tx/0xd819683e1066d12b53c58e7ee46bb908c9550f41b8d1692e8c8e9cf69e8358bf
+ - https://celoscan.io/tx/0x82e9279cab198549842ab3fe0ba4090c737d140fc31765daeae76fcd1a5b2f04
+ - https://celoscan.io/tx/0xb25a95a1662268e58abeb640ba13d0d53dddb2146464f122fb764f9b0dcf8305
+
 ## 🎯 The Business Proposition
 
 ### The Problem
