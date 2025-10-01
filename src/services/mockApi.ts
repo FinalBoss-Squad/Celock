@@ -101,9 +101,12 @@ export const mockApi = {
   },
 
   generateMockTxHash(): string {
-    return '0x' + Array.from({ length: 64 }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
+    const txHashes = [
+      '0xd819683e1066d12b53c58e7ee46bb908c9550f41b8d1692e8c8e9cf69e8358bf',
+      '0x82e9279cab198549842ab3fe0ba4090c737d140fc31765daeae76fcd1a5b2f04',
+      '0xb25a95a1662268e58abeb640ba13d0d53dddb2146464f122fb764f9b0dcf8305',
+    ];
+    return txHashes[Math.floor(Math.random() * txHashes.length)];
   },
 
   getExplorerUrl(chainId: number, txHash: string): string {
