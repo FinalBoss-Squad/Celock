@@ -19,8 +19,11 @@ No more free rides. If a bot wants your data, it has to pay for it—instantly, 
 ## 🌪️ The Problem
 
   - **💸 Unmonetized Traffic:** Bots and AI agents consume massive bandwidth and compute power, almost always for free.
+  
   - **📈 Spiraling Costs:** Every bot request incurs real infrastructure costs, directly eating into your margins.
+  
   - **🚫 Broken Defenses:** CAPTCHAs and IP bans are blunt instruments that create friction for users and are easily bypassed by sophisticated bots.
+  
   - **🌉 Missing Infrastructure:** There is no seamless, standardized way for machines to pay other machines for API calls or data access.
 
 
@@ -90,8 +93,8 @@ Celock is designed for flexibility and scale:
 
   - **Proxy Server:** Node.js, Express.js
   - **Blockchain:** Solidity on Celo (Mainnet)
-  - **Web3 Interaction:** ethers.js, Web3.js
-  - **Agent SDK:** Python, JavaScript
+  - **Web3 Interaction:** ethers.js, Web3.js, Thirdweb SDK
+  - **Frontend:** React js(Vite)
 
 
 -----
