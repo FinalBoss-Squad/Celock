@@ -11,6 +11,7 @@ import { useAppStore } from '@/store/appStore';
 import { mockApi } from '@/services/mockApi';
 import { useToast } from '@/hooks/use-toast';
 import RequestTimeline from '@/components/RequestTimeline';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const userAgents = [
   { label: 'Browser (Human)', value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0' },
@@ -205,10 +206,13 @@ const BotSimulator = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Bot Simulator Console</h1>
-            <Button variant="ghost" onClick={() => navigate('/')}>
-              <Home className="mr-2 h-4 w-4" />
-              Home
-            </Button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button variant="ghost" onClick={() => navigate('/')}>
+                <Home className="mr-2 h-4 w-4" />
+                Home
+              </Button>
+            </div>
           </div>
         </div>
       </header>

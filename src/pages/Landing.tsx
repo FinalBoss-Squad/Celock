@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Bot, ArrowRight, Zap, Shield, Coins } from 'lucide-react';
 import heroImage from '@/assets/hero-web3.jpg';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ const Landing = () => {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               x402 Gateway
             </h1>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Button variant="ghost" onClick={() => navigate('/publisher')}>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 Publisher

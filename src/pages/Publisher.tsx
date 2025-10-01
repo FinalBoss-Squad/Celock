@@ -13,6 +13,7 @@ import { mockApi } from '@/services/mockApi';
 import { useToast } from '@/hooks/use-toast';
 import EventsTable from '@/components/EventsTable';
 import KPICards from '@/components/KPICards';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const chains = [
   { id: 1, name: 'Ethereum', token: 'ETH' },
@@ -53,10 +54,13 @@ const Publisher = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Publisher Dashboard</h1>
-            <Button variant="ghost" onClick={() => navigate('/')}>
-              <Home className="mr-2 h-4 w-4" />
-              Home
-            </Button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button variant="ghost" onClick={() => navigate('/')}>
+                <Home className="mr-2 h-4 w-4" />
+                Home
+              </Button>
+            </div>
           </div>
         </div>
       </header>
