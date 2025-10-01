@@ -1,4 +1,4 @@
-# x402 Gateway - Monetize Bot Traffic with Web3 Payments
+# Celock - Monetize Bot Traffic with Web3 Payments
 
 Transform unwanted bot traffic into revenue streams using **HTTP 402 Payment Required** and blockchain micropayments. This demo platform showcases how publishers can gate their APIs and content behind Web3 payments, allowing bots to pay for access in real-time.
 
