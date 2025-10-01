@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,13 +36,75 @@ interface TimelineStep {
 const BotSimulator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { settings, addEvent } = useAppStore();
+  const { settings, addEvent, updateSettings } = useAppStore();
   
   const [selectedUA, setSelectedUA] = useState(userAgents[3].value);
   const [targetUrl, setTargetUrl] = useState('/protected');
   const [timeline, setTimeline] = useState<TimelineStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'none' | 'pending' | 'paid'>('none');
+
+  // Load settings from database and subscribe to changes
+  useEffect(() => {
+    const loadSettings = async () => {
+      const { data, error } = await supabase
+        .from('gateway_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        const dbSettings = {
+          chainId: data.chain_id,
+          tokenAddress: data.token_address,
+          priceWei: data.price_wei,
+          gatedRoutes: data.gated_routes,
+          allowlist: data.allowlist,
+          protectionEnabled: data.protection_enabled,
+        };
+        updateSettings(dbSettings);
+        console.log('✅ Loaded settings from database:', dbSettings);
+      }
+    };
+
+    loadSettings();
+
+    // Subscribe to settings changes
+    const settingsChannel = supabase
+      .channel('bot_settings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'gateway_settings'
+        },
+        (payload) => {
+          console.log('🔄 Settings changed:', payload);
+          const updated = payload.new as any;
+          if (updated) {
+            const dbSettings = {
+              chainId: updated.chain_id,
+              tokenAddress: updated.token_address,
+              priceWei: updated.price_wei,
+              gatedRoutes: updated.gated_routes,
+              allowlist: updated.allowlist,
+              protectionEnabled: updated.protection_enabled,
+            };
+            updateSettings(dbSettings);
+            toast({
+              title: "Settings Updated",
+              description: `Protection is now ${dbSettings.protectionEnabled ? 'enabled' : 'disabled'}`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(settingsChannel);
+    };
+  }, [updateSettings, toast]);
 
   const selectedUserAgent = userAgents.find(ua => ua.value === selectedUA);
   

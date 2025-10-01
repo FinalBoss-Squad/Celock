@@ -289,21 +289,40 @@ const check402Protection = async (userAgent: string) => {
               <Switch 
                 checked={localSettings.protectionEnabled}
                 onCheckedChange={async (checked) => {
+                  console.log('🔄 Toggling protection to:', checked);
                   const newSettings = { ...localSettings, protectionEnabled: checked };
                   setLocalSettings(newSettings);
                   
                   // Save to database immediately
-                  const { data: existing } = await supabase
+                  const { data: existing, error: fetchError } = await supabase
                     .from('gateway_settings')
                     .select('id')
                     .limit(1)
                     .maybeSingle();
 
+                  console.log('Existing settings:', existing, 'Error:', fetchError);
+
                   if (existing) {
-                    await supabase
+                    const { error: updateError } = await supabase
                       .from('gateway_settings')
                       .update({ protection_enabled: checked })
                       .eq('id', existing.id);
+                    
+                    console.log('Update result - Error:', updateError);
+                  } else {
+                    // Insert if no row exists
+                    const { error: insertError } = await supabase
+                      .from('gateway_settings')
+                      .insert({
+                        protection_enabled: checked,
+                        chain_id: newSettings.chainId,
+                        token_address: newSettings.tokenAddress,
+                        price_wei: newSettings.priceWei,
+                        gated_routes: newSettings.gatedRoutes,
+                        allowlist: newSettings.allowlist,
+                      });
+                    
+                    console.log('Insert result - Error:', insertError);
                   }
                   
                   updateSettings(newSettings);
