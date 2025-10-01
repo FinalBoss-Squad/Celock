@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      gateway_settings: {
+        Row: {
+          allowlist: string[]
+          chain_id: number
+          created_at: string
+          gated_routes: string[]
+          id: string
+          price_wei: string
+          protection_enabled: boolean
+          token_address: string
+          updated_at: string
+        }
+        Insert: {
+          allowlist?: string[]
+          chain_id?: number
+          created_at?: string
+          gated_routes?: string[]
+          id?: string
+          price_wei?: string
+          protection_enabled?: boolean
+          token_address?: string
+          updated_at?: string
+        }
+        Update: {
+          allowlist?: string[]
+          chain_id?: number
+          created_at?: string
+          gated_routes?: string[]
+          id?: string
+          price_wei?: string
+          protection_enabled?: boolean
+          token_address?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       request_events: {
         Row: {
           amount: string | null
