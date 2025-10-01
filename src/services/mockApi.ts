@@ -37,7 +37,8 @@ export const mockApi = {
   async accessProtectedEndpoint(
     userAgent: string,
     allowlist: string[],
-    txHash?: string
+    txHash?: string,
+    protectionEnabled: boolean = true
   ): Promise<{
     status: number;
     data?: any;
@@ -45,6 +46,14 @@ export const mockApi = {
   }> {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 200));
+
+    // If protection is disabled, always allow access
+    if (!protectionEnabled) {
+      return {
+        status: 200,
+        data: { message: 'Access granted - protection disabled', content: 'Protected content here!' }
+      };
+    }
 
     // Check if UA is in allowlist
     const isAllowlisted = allowlist.some(allowed => 

@@ -76,7 +76,9 @@ const BotSimulator = () => {
 
     const response = await mockApi.accessProtectedEndpoint(
       selectedUA,
-      settings.allowlist
+      settings.allowlist,
+      undefined,
+      settings.protectionEnabled
     );
 
     if (response.status === 200) {
@@ -186,7 +188,8 @@ const BotSimulator = () => {
     const finalResponse = await mockApi.accessProtectedEndpoint(
       selectedUA,
       settings.allowlist,
-      txHash
+      txHash,
+      settings.protectionEnabled
     );
 
     setTimeline(prev => [
