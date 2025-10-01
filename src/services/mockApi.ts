@@ -100,6 +100,7 @@ export const mockApi = {
       1: 'etherscan.io',
       8453: 'basescan.org',
       137: 'polygonscan.com',
+      42220: 'celoscan.io',
     };
     const domain = explorers[chainId] || 'etherscan.io';
     return `https://${domain}/tx/${txHash}`;

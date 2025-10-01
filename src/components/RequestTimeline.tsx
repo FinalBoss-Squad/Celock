@@ -72,12 +72,17 @@ const RequestTimeline = ({ steps }: RequestTimelineProps) => {
 
                 {/* Additional Data Display */}
                 {step.data && (
-                  <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+                  <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-border/30">
                     {step.id === '2' && step.data.chainId && (
                       <div className="space-y-1 text-xs font-mono">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Chain ID:</span>
-                          <span>{step.data.chainId}</span>
+                          <span>
+                            {step.data.chainId === 42220 ? '42220 (Celo)' :
+                             step.data.chainId === 8453 ? '8453 (Base)' :
+                             step.data.chainId === 137 ? '137 (Polygon)' :
+                             step.data.chainId}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">To:</span>
@@ -85,7 +90,10 @@ const RequestTimeline = ({ steps }: RequestTimelineProps) => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Token:</span>
-                          <span>USDC</span>
+                          <span className="font-semibold">
+                            {step.data.tokenAddress === '0x765DE816845861e75A25fCA122bb6898B8B1282a' ? 'cUSD (Celo)' :
+                             step.data.tokenAddress === '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' ? 'USDC' : 'Native'}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Amount:</span>

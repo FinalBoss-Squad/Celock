@@ -19,10 +19,12 @@ const chains = [
   { id: 1, name: 'Ethereum', token: 'ETH' },
   { id: 8453, name: 'Base', token: 'ETH' },
   { id: 137, name: 'Polygon', token: 'MATIC' },
+  { id: 42220, name: 'Celo', token: 'CELO' },
 ];
 
 const tokens = [
   { address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', symbol: 'USDC', decimals: 6 },
+  { address: '0x765DE816845861e75A25fCA122bb6898B8B1282a', symbol: 'cUSD', decimals: 18 },
   { address: '0x0000000000000000000000000000000000000000', symbol: 'ETH', decimals: 18 },
 ];
 

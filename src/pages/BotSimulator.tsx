@@ -14,10 +14,14 @@ import RequestTimeline from '@/components/RequestTimeline';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const userAgents = [
-  { label: 'Browser (Human)', value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0' },
-  { label: 'Googlebot (Allowlisted)', value: 'Mozilla/5.0 (compatible; Googlebot/2.1)' },
-  { label: 'BotX (Crawler)', value: 'BotX/1.0 (+http://example.com/bot)' },
-  { label: 'DataBot (Scraper)', value: 'DataBot/2.0' },
+  { label: 'Browser (Human)', value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0', type: 'human' },
+  { label: 'Googlebot (Allowlisted)', value: 'Mozilla/5.0 (compatible; Googlebot/2.1)', type: 'allowlisted' },
+  { label: 'Bingbot (Allowlisted)', value: 'Mozilla/5.0 (compatible; bingbot/2.0)', type: 'allowlisted' },
+  { label: 'BotX Crawler', value: 'BotX/1.0 (+http://example.com/bot)', type: 'bot' },
+  { label: 'DataBot Scraper', value: 'DataBot/2.0 (Enterprise)', type: 'bot' },
+  { label: 'AI Content Bot', value: 'AIContentBot/3.0 (Training)', type: 'bot' },
+  { label: 'SEO Spider', value: 'SEOSpider/5.0 (+https://seo-tools.com)', type: 'bot' },
+  { label: 'Web Scraper Pro', value: 'WebScraperPro/1.5', type: 'bot' },
 ];
 
 interface TimelineStep {
@@ -33,20 +37,31 @@ const BotSimulator = () => {
   const { toast } = useToast();
   const { settings, addEvent } = useAppStore();
   
-  const [selectedUA, setSelectedUA] = useState(userAgents[2].value);
+  const [selectedUA, setSelectedUA] = useState(userAgents[3].value);
   const [targetUrl, setTargetUrl] = useState('/protected');
   const [timeline, setTimeline] = useState<TimelineStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'none' | 'pending' | 'paid'>('none');
 
+  const selectedUserAgent = userAgents.find(ua => ua.value === selectedUA);
+  
   const mockWallet = {
     address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
     balance: '10.5 USDC',
     network: 'Base',
   };
 
+  const getTokenInfo = () => {
+    const token = settings.tokenAddress === '0x765DE816845861e75A25fCA122bb6898B8B1282a' ? 'cUSD' :
+                  settings.tokenAddress === '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' ? 'USDC' : 'ETH';
+    const decimals = token === 'ETH' ? 18 : token === 'cUSD' ? 18 : 6;
+    return { token, decimals };
+  };
+
   const runSimulation = async () => {
     setIsRunning(true);
     setTimeline([]);
+    setPaymentStatus('none');
 
     // Step 1: Initial Request
     const step1: TimelineStep = {
@@ -115,6 +130,9 @@ const BotSimulator = () => {
     await new Promise(r => setTimeout(r, 1000));
 
     // Step 3: Payment
+    setPaymentStatus('pending');
+
+    // Step 3: Payment
     setTimeline(prev => [
       ...prev,
       {
@@ -126,6 +144,9 @@ const BotSimulator = () => {
     ]);
 
     await new Promise(r => setTimeout(r, 1500));
+
+
+    setPaymentStatus('paid');
 
     const txHash = mockApi.generateMockTxHash();
     await mockApi.verifyPayment(txHash);
@@ -229,15 +250,23 @@ const BotSimulator = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>User-Agent</Label>
+                  <Label>Bot Type / User-Agent</Label>
                   <Select value={selectedUA} onValueChange={setSelectedUA}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover z-50">
                       {userAgents.map(ua => (
                         <SelectItem key={ua.value} value={ua.value}>
-                          {ua.label}
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={ua.type === 'human' ? 'secondary' : ua.type === 'allowlisted' ? 'default' : 'outline'}
+                              className="text-xs"
+                            >
+                              {ua.type === 'human' ? '👤 Human' : ua.type === 'allowlisted' ? '✓ Allowed' : '🤖 Bot'}
+                            </Badge>
+                            <span>{ua.label}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -245,6 +274,18 @@ const BotSimulator = () => {
                   <p className="text-xs text-muted-foreground font-mono break-all">
                     {selectedUA}
                   </p>
+                  {selectedUserAgent && (
+                    <div className="mt-2">
+                      <Badge variant={
+                        selectedUserAgent.type === 'human' ? 'secondary' :
+                        selectedUserAgent.type === 'allowlisted' ? 'default' : 'outline'
+                      }>
+                        {selectedUserAgent.type === 'human' && '👤 Will bypass payment (human)'}
+                        {selectedUserAgent.type === 'allowlisted' && '✓ Will bypass payment (allowlisted)'}
+                        {selectedUserAgent.type === 'bot' && '🤖 Will require payment'}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -253,7 +294,36 @@ const BotSimulator = () => {
                     value={targetUrl}
                     onChange={(e) => setTargetUrl(e.target.value)}
                     placeholder="/protected"
+                    className="bg-background"
                   />
+                </div>
+
+
+                <div className="p-3 bg-muted/30 rounded-lg space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Payment Required:</span>
+                    <span className="font-semibold">
+                      ${(parseFloat(settings.priceWei) / Math.pow(10, getTokenInfo().decimals)).toFixed(4)} {getTokenInfo().token}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Chain:</span>
+                    <Badge variant="secondary">
+                      {settings.chainId === 42220 ? 'Celo' : 
+                       settings.chainId === 8453 ? 'Base' :
+                       settings.chainId === 137 ? 'Polygon' : 'Ethereum'}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Payment Status:</span>
+                    <Badge variant={
+                      paymentStatus === 'paid' ? 'default' :
+                      paymentStatus === 'pending' ? 'outline' : 'secondary'
+                    }>
+                      {paymentStatus === 'paid' ? '✓ Paid' :
+                       paymentStatus === 'pending' ? '⏳ Processing' : 'Not Paid'}
+                    </Badge>
+                  </div>
                 </div>
 
                 <Button 
