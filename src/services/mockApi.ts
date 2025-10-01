@@ -12,6 +12,7 @@ export const mockApi = {
       priceWei: '1000000',
       gatedRoutes: ['/protected'],
       allowlist: ['googlebot', 'bingbot'],
+      protectionEnabled: true,
     };
   },
 

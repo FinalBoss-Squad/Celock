@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
-import { Home, Save, DollarSign, Activity } from 'lucide-react';
+import { Home, Save, DollarSign, Activity, Code, Copy, Check } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { mockApi } from '@/services/mockApi';
 import { useToast } from '@/hooks/use-toast';
@@ -38,6 +39,7 @@ const Publisher = () => {
   const [localSettings, setLocalSettings] = useState(settings);
   const [allowlistText, setAllowlistText] = useState(settings.allowlist.join('\n'));
   const [events, setEvents] = useState<RequestEvent[]>([]);
+  const [copied, setCopied] = useState(false);
 
   // Fetch events from database
   useEffect(() => {
@@ -106,6 +108,39 @@ const Publisher = () => {
     });
   };
 
+  const codeSnippet = `// Add this middleware to your protected page
+import { supabase } from '@/integrations/supabase/client';
+
+const check402Protection = async (userAgent: string) => {
+  const { data: settings } = await supabase
+    .from('gateway_settings')
+    .select('*')
+    .single();
+  
+  if (!settings?.protectionEnabled) return true;
+  
+  // Check allowlist
+  const isAllowed = settings.allowlist.some(
+    bot => userAgent.toLowerCase().includes(bot.toLowerCase())
+  );
+  
+  if (isAllowed) return true;
+  
+  // Check payment - implement your payment verification logic
+  // Return false to block, true to allow
+  return false;
+};`;
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(codeSnippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({
+      title: "Copied!",
+      description: "Code snippet copied to clipboard.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -127,6 +162,61 @@ const Publisher = () => {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* KPIs */}
         <KPICards />
+
+        {/* Protection Toggle & Code Snippet */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Code className="h-5 w-5 text-primary" />
+              402 Payment Protection
+            </CardTitle>
+            <CardDescription>Enable/disable protection and get integration code</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="space-y-0.5">
+                <Label className="text-base">Protection Status</Label>
+                <p className="text-sm text-muted-foreground">
+                  {localSettings.protectionEnabled ? 'Active - Requests are gated' : 'Disabled - All requests allowed'}
+                </p>
+              </div>
+              <Switch 
+                checked={localSettings.protectionEnabled}
+                onCheckedChange={(checked) => {
+                  const newSettings = { ...localSettings, protectionEnabled: checked };
+                  setLocalSettings(newSettings);
+                  updateSettings(newSettings);
+                  mockApi.updateSettings(newSettings);
+                  toast({
+                    title: checked ? "Protection Enabled" : "Protection Disabled",
+                    description: checked ? "402 payment protection is now active." : "All requests will be allowed.",
+                  });
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Integration Code</Label>
+              <div className="relative">
+                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-64 overflow-y-auto">
+                  <code>{codeSnippet}</code>
+                </pre>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="absolute top-2 right-2"
+                  onClick={handleCopyCode}
+                >
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? 'Copied' : 'Copy'}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Add this middleware to your protected pages to enable 402 payment verification
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Pricing Configuration */}

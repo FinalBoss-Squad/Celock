@@ -16,6 +16,7 @@ export interface AppSettings {
   priceWei: string;
   gatedRoutes: string[];
   allowlist: string[];
+  protectionEnabled: boolean;
 }
 
 interface AppState {
@@ -36,6 +37,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     priceWei: '1000000', // 1 USDC (6 decimals)
     gatedRoutes: ['/protected'],
     allowlist: ['googlebot', 'bingbot'],
+    protectionEnabled: true,
   },
   events: [],
   totalRevenue: '0',
