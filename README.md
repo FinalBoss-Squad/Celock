@@ -27,7 +27,7 @@ No more free rides. If a bot wants your data, it has to pay for it—instantly, 
 
 ## 🚀 Our Solution: The Celock Protocol
 
-Celock is a lightweight, plug-and-play proxy that sits in front of any existing API or web service. It enforces payment-gated access without requiring any changes to your core application logic.
+Celock is a lightweight, plug-and-play proxy that sits in front of any existing website, web app, or API. It enforces payment-gated access without requiring any changes to your core application logic.
 
 #### The Flow in Action:
 
@@ -36,11 +36,11 @@ sequenceDiagram
     participant Bot as 🤖 Compliant Bot
     participant Celock as 🔒 Celock Proxy
     participant Celo as 🪙 Celo Blockchain
-    participant Server as 🖥️ Your API/Server
+    participant Server as 🖥️ Your Website/App
 
-    Bot->>Celock: 1. Request data (e.g., GET /api/data)
+    Bot->>Celock: 1. Request resource (e.g., GET /page.html)
     Celock-->>Bot: 2. Challenge with HTTP 402 (Invoice ID + Price)
-    Bot->>Celo: 3. Pays invoice in cUSD to Smart Contract
+    Bot->>Celo: 3. Pays invoice in cUSD/Celo to Smart Contract
     Celo-->>Bot: Transaction Confirmed
     Bot->>Celock: 4. Retry request with Proof of Payment (Tx Hash)
     Celock->>Celo: 5. Verifies payment on-chain
@@ -54,10 +54,12 @@ sequenceDiagram
 
 ## 🛠️ Key Features
 
-  - ⚡ **Instant `402` Enforcement:** A non-intrusive Node.js/Express proxy that adds a payment layer to any endpoint.
-  - 🪙 **Gas-Efficient Celo Contract:** A lightweight Solidity smart contract for fast, low-cost on-chain payment verification.
-  - 🤖 **Bot Agent SDK:** A simple SDK in Python & JS that automates the `402` payment handshake for compliant bots.
-  - 📊 **Revenue Dashboard:** A clean interface to track paid vs. blocked requests, monitor revenue, and analyze traffic patterns.
+ - 🛠️ Key Features
+⚡ Instant Plug-and-Play Gateway: The core of Celock is a non-intrusive proxy that protects any endpoint. Its key advantage is simplicity—you can deploy it in minutes to monetize traffic without modifying a single line of your existing application code.
+
+- 🪙 Architected for Celo Efficiency: Our protocol is designed specifically to leverage Celo's unique advantages. This architecture ensures that payments are primed for ultra-low gas fees and rapid transaction finality, making true, cost-effective micropayments practical at any scale.
+
+- 🌐 Built on an Open Standard: By using HTTP 402, Celock is inherently open and extensible. This provides a universal, future-proof foundation for a complete machine economy, creating a clear path for ecosystem tools like bot SDKs and revenue dashboards to be built on top.
 
   ## Example Implementations on Mainnet:
  - https://celoscan.io/tx/0xd819683e1066d12b53c58e7ee46bb908c9550f41b8d1692e8c8e9cf69e8358bf
@@ -68,9 +70,12 @@ sequenceDiagram
 
 ## 📦 Use Cases
 
-  - **🤖 API Providers:** Monetize every single automated call, turning a cost center into a new revenue stream.
-  - **📰 Content Platforms:** Protect valuable content from scrapers while allowing paid, programmatic access for legitimate AI agents.
-  - **🧠 AI Agent Platforms:** Enable AI agents to autonomously pay for the data they need, creating a true pay-as-you-go machine economy.
+Who is this for?
+- 🌐 **Websites & Publishers**: Tired of bots scraping your website's content for free? Celock forces them to pay for the privilege. Protect your articles, product listings, or data while creating a new revenue channel from automated traffic.
+
+- 🤖 **API Providers**: Your API is valuable. Celock ensures you get paid for every automated call, turning traffic that currently costs you money into a predictable revenue stream.
+
+- 🧠 **AI Agent Developers**: Build truly autonomous agents. Celock is the native payment layer for the machine economy, enabling your AI to seamlessly pay for the data and services it needs on the fly, without human intervention.
 
 ## 💰 Business Model
 
