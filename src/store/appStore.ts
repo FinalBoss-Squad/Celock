@@ -32,9 +32,9 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set, get) => ({
   settings: {
-    chainId: 8453, // Base
-    tokenAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // USDC on Base
-    priceWei: '1000000', // 1 USDC (6 decimals)
+    chainId: 42220, // Celo
+    tokenAddress: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // cUSD on Celo
+    priceWei: '1000000000000000000', // 1 cUSD (18 decimals)
     gatedRoutes: ['/protected'],
     allowlist: ['googlebot', 'bingbot'],
     protectionEnabled: true,
