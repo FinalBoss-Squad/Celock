@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import EventsTable from '@/components/EventsTable';
 import KPICards from '@/components/KPICards';
 import ThemeToggle from '@/components/ThemeToggle';
+import TrafficChart from '@/components/TrafficChart';
 import { supabase } from '@/integrations/supabase/client';
 import type { RequestEvent } from '@/store/appStore';
 
@@ -162,6 +163,20 @@ const check402Protection = async (userAgent: string) => {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* KPIs */}
         <KPICards />
+
+        {/* Traffic Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              Traffic Over Time
+            </CardTitle>
+            <CardDescription>Real-time traffic visualization (Last 24 hours)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TrafficChart />
+          </CardContent>
+        </Card>
 
         {/* Protection Toggle & Code Snippet */}
         <Card>
