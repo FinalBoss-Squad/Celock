@@ -1,6 +1,6 @@
 # 🔒 Celock
 
-**Turn Bot Traffic into Revenue with Celo Micropayments.** *The plug-and-play firewall that makes bots pay their way, built on `HTTP 402`.*
+**Turn Bot Traffic into Revenue with Celo Micropayments.** *The plug-and-play firewall that makes bots pay their way, built on `x402 Standard`.*
 
 **🏆 A Hackathon ORIGINS @ TOKEN2049 Project**
 
