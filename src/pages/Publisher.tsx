@@ -42,6 +42,66 @@ const Publisher = () => {
   const [events, setEvents] = useState<RequestEvent[]>([]);
   const [copied, setCopied] = useState(false);
 
+  // Load settings from database on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      const { data, error } = await supabase
+        .from('gateway_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        const dbSettings = {
+          chainId: data.chain_id,
+          tokenAddress: data.token_address,
+          priceWei: data.price_wei,
+          gatedRoutes: data.gated_routes,
+          allowlist: data.allowlist,
+          protectionEnabled: data.protection_enabled,
+        };
+        setLocalSettings(dbSettings);
+        setAllowlistText(dbSettings.allowlist.join('\n'));
+        updateSettings(dbSettings);
+      }
+    };
+
+    loadSettings();
+
+    // Subscribe to settings changes
+    const settingsChannel = supabase
+      .channel('gateway_settings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'gateway_settings'
+        },
+        (payload) => {
+          const updated = payload.new as any;
+          if (updated) {
+            const dbSettings = {
+              chainId: updated.chain_id,
+              tokenAddress: updated.token_address,
+              priceWei: updated.price_wei,
+              gatedRoutes: updated.gated_routes,
+              allowlist: updated.allowlist,
+              protectionEnabled: updated.protection_enabled,
+            };
+            setLocalSettings(dbSettings);
+            setAllowlistText(dbSettings.allowlist.join('\n'));
+            updateSettings(dbSettings);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(settingsChannel);
+    };
+  }, [updateSettings]);
+
   // Fetch events from database
   useEffect(() => {
     const fetchEvents = async () => {
@@ -100,7 +160,38 @@ const Publisher = () => {
     const allowlist = allowlistText.split('\n').map(s => s.trim()).filter(Boolean);
     const newSettings = { ...localSettings, allowlist };
     
-    await mockApi.updateSettings(newSettings);
+    // Save to database
+    const { data: existing } = await supabase
+      .from('gateway_settings')
+      .select('id')
+      .limit(1)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from('gateway_settings')
+        .update({
+          chain_id: newSettings.chainId,
+          token_address: newSettings.tokenAddress,
+          price_wei: newSettings.priceWei,
+          gated_routes: newSettings.gatedRoutes,
+          allowlist: newSettings.allowlist,
+          protection_enabled: newSettings.protectionEnabled,
+        })
+        .eq('id', existing.id);
+    } else {
+      await supabase
+        .from('gateway_settings')
+        .insert({
+          chain_id: newSettings.chainId,
+          token_address: newSettings.tokenAddress,
+          price_wei: newSettings.priceWei,
+          gated_routes: newSettings.gatedRoutes,
+          allowlist: newSettings.allowlist,
+          protection_enabled: newSettings.protectionEnabled,
+        });
+    }
+    
     updateSettings(newSettings);
     
     toast({
@@ -197,11 +288,26 @@ const check402Protection = async (userAgent: string) => {
               </div>
               <Switch 
                 checked={localSettings.protectionEnabled}
-                onCheckedChange={(checked) => {
+                onCheckedChange={async (checked) => {
                   const newSettings = { ...localSettings, protectionEnabled: checked };
                   setLocalSettings(newSettings);
+                  
+                  // Save to database immediately
+                  const { data: existing } = await supabase
+                    .from('gateway_settings')
+                    .select('id')
+                    .limit(1)
+                    .maybeSingle();
+
+                  if (existing) {
+                    await supabase
+                      .from('gateway_settings')
+                      .update({ protection_enabled: checked })
+                      .eq('id', existing.id);
+                  }
+                  
                   updateSettings(newSettings);
-                  mockApi.updateSettings(newSettings);
+                  
                   toast({
                     title: checked ? "Protection Enabled" : "Protection Disabled",
                     description: checked ? "402 payment protection is now active." : "All requests will be allowed.",

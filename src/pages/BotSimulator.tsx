@@ -64,10 +64,18 @@ const BotSimulator = () => {
     setTimeline([]);
     setPaymentStatus('none');
 
-    console.log('🚀 Starting simulation with protectionEnabled:', settings.protectionEnabled);
+    // Fetch current protection status from database
+    const { data: dbSettings } = await supabase
+      .from('gateway_settings')
+      .select('protection_enabled')
+      .limit(1)
+      .maybeSingle();
+
+    const protectionEnabled = dbSettings?.protection_enabled ?? true;
+    console.log('🚀 Starting simulation with protectionEnabled:', protectionEnabled);
 
     // If protection is off, skip straight to success
-    if (!settings.protectionEnabled) {
+    if (!protectionEnabled) {
       const step1: TimelineStep = {
         id: '1',
         title: 'Request Initiated',
