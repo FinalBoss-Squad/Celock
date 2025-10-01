@@ -109,7 +109,7 @@ export const mockApi = {
   getExplorerUrl(chainId: number, txHash: string): string {
     const explorers: Record<number, string> = {
       1: 'etherscan.io',
-      8453: 'basescan.org',
+      8453: 'celoscan.io',
       137: 'polygonscan.com',
       42220: 'celoscan.io',
     };

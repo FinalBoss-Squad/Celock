@@ -180,18 +180,69 @@ npm run lint         # Run ESLint
 
 ## 🌐 Deployment
 
-### Quick Deploy (Lovable)
+### Cloudflare Pages (Recommended)
+
+The project includes Cloudflare Pages configuration for optimal performance with Cloudflare's global CDN.
+
+#### Prerequisites
+1. [Cloudflare account](https://dash.cloudflare.com/sign-up)
+2. [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) installed globally
+
+#### Setup
+
+1. **Install Wrangler** (if not already installed):
+```bash
+npm install -g wrangler
+```
+
+2. **Authenticate with Cloudflare**:
+```bash
+wrangler login
+```
+
+3. **Configure environment variables** in Cloudflare Pages dashboard:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+4. **Deploy**:
+```bash
+npm run pages:deploy
+```
+
+#### GitHub Actions Auto-Deploy
+
+The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) for automatic deployments on push to `main`.
+
+**Required GitHub Secrets:**
+- `CLOUDFLARE_API_TOKEN` - Your Cloudflare API token ([create one](https://dash.cloudflare.com/profile/api-tokens))
+- `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
+- `VITE_SUPABASE_URL` - Your Supabase project URL
+- `VITE_SUPABASE_PUBLISHABLE_KEY` - Your Supabase anon key
+
+#### Local Cloudflare Pages Testing
+```bash
+npm run build
+npm run pages:dev
+```
+
+### Alternative Deployments
+
+#### Vercel
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+#### Netlify
+```bash
+npm install -g netlify-cli
+netlify deploy --prod
+```
+
+#### Quick Deploy (Lovable)
 1. Visit [Lovable](https://lovable.dev/projects/739f5204-89fd-406b-af0d-c20dcfd2d0a5)
 2. Click **Share → Publish**
 3. Your app is live!
-
-### Manual Deploy
-Deploy to Vercel, Netlify, or any static host:
-
-```bash
-npm run build
-# Upload ./dist folder
-```
 
 ## 🔗 Supported Chains
 

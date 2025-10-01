@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Bot, ArrowRight, Zap, Shield, Coins } from 'lucide-react';
 import heroImage from '@/assets/hero-web3.jpg';
 import ThemeToggle from '@/components/ThemeToggle';
+import logo from '/logo.png';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -14,9 +15,10 @@ const Landing = () => {
       <header className="border-b border-border/40 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              x402 Gateway
-            </h1>
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="x402 Gateway" className="h-10" />
+              
+            </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <Button variant="ghost" onClick={() => navigate('/publisher')}>

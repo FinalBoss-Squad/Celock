@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Wrangler/Cloudflare
+.wrangler
+wrangler.toml.local
+.dev.vars
+

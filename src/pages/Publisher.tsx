@@ -19,6 +19,8 @@ import TrafficChart from '@/components/TrafficChart';
 import { supabase } from '@/integrations/supabase/client';
 import type { RequestEvent } from '@/store/appStore';
 
+import logo from '/logo.png';
+
 const chains = [
   { id: 1, name: 'Ethereum', token: 'ETH' },
   { id: 8453, name: 'Base', token: 'ETH' },
@@ -221,7 +223,7 @@ const check402Protection = async (userAgent: string) => {
   // Check payment - implement your payment verification logic
   // Return false to block, true to allow
   return false;
-};`;
+};`
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(codeSnippet);
@@ -239,7 +241,8 @@ const check402Protection = async (userAgent: string) => {
       <header className="border-b border-border/40 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Publisher Dashboard</h1>
+            
+              <img src={logo} alt="x402 Gateway" className="h-10" />
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <Button variant="ghost" onClick={() => navigate('/')}>
