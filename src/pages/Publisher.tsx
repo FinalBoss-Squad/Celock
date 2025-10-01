@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,13 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { Home, Save, DollarSign, Activity, ExternalLink } from 'lucide-react';
+import { Home, Save, DollarSign, Activity } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { mockApi } from '@/services/mockApi';
 import { useToast } from '@/hooks/use-toast';
 import EventsTable from '@/components/EventsTable';
 import KPICards from '@/components/KPICards';
 import ThemeToggle from '@/components/ThemeToggle';
+import { supabase } from '@/integrations/supabase/client';
+import type { RequestEvent } from '@/store/appStore';
 
 const chains = [
   { id: 1, name: 'Ethereum', token: 'ETH' },
@@ -31,10 +33,65 @@ const tokens = [
 const Publisher = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { settings, updateSettings, events } = useAppStore();
+  const { settings, updateSettings } = useAppStore();
   
   const [localSettings, setLocalSettings] = useState(settings);
   const [allowlistText, setAllowlistText] = useState(settings.allowlist.join('\n'));
+  const [events, setEvents] = useState<RequestEvent[]>([]);
+
+  // Fetch events from database
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const { data, error } = await supabase
+        .from('request_events')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(100);
+
+      if (data) {
+        setEvents(data.map(event => ({
+          id: event.id,
+          timestamp: event.timestamp,
+          userAgent: event.user_agent,
+          endpoint: event.endpoint,
+          status: event.status as 'paid' | 'blocked' | 'allowed' | 'pending',
+          txHash: event.tx_hash || undefined,
+          amount: event.amount || undefined,
+        })));
+      }
+    };
+
+    fetchEvents();
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('request_events_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'request_events'
+        },
+        (payload) => {
+          const newEvent = payload.new as any;
+          setEvents(prev => [{
+            id: newEvent.id,
+            timestamp: newEvent.timestamp,
+            userAgent: newEvent.user_agent,
+            endpoint: newEvent.endpoint,
+            status: newEvent.status,
+            txHash: newEvent.tx_hash || undefined,
+            amount: newEvent.amount || undefined,
+          }, ...prev].slice(0, 100));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleSave = async () => {
     const allowlist = allowlistText.split('\n').map(s => s.trim()).filter(Boolean);

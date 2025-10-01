@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      request_events: {
+        Row: {
+          amount: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          status: string
+          timestamp: number
+          tx_hash: string | null
+          user_agent: string
+        }
+        Insert: {
+          amount?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          status: string
+          timestamp: number
+          tx_hash?: string | null
+          user_agent: string
+        }
+        Update: {
+          amount?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          status?: string
+          timestamp?: number
+          tx_hash?: string | null
+          user_agent?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

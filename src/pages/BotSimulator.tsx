@@ -12,6 +12,7 @@ import { mockApi } from '@/services/mockApi';
 import { useToast } from '@/hooks/use-toast';
 import RequestTimeline from '@/components/RequestTimeline';
 import ThemeToggle from '@/components/ThemeToggle';
+import { supabase } from '@/integrations/supabase/client';
 
 const userAgents = [
   { label: 'Browser (Human)', value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0', type: 'human' },
@@ -91,10 +92,10 @@ const BotSimulator = () => {
         },
       ]);
       
-      addEvent({
-        id: Date.now().toString(),
+      // Save to database
+      await supabase.from('request_events').insert({
         timestamp: Date.now(),
-        userAgent: selectedUA,
+        user_agent: selectedUA,
         endpoint: targetUrl,
         status: 'allowed',
       });
@@ -119,10 +120,10 @@ const BotSimulator = () => {
       },
     ]);
     
-    addEvent({
-      id: Date.now().toString(),
+    // Save to database
+    await supabase.from('request_events').insert({
       timestamp: Date.now(),
-      userAgent: selectedUA,
+      user_agent: selectedUA,
       endpoint: targetUrl,
       status: 'blocked',
     });
@@ -203,13 +204,13 @@ const BotSimulator = () => {
       },
     ]);
 
-    addEvent({
-      id: Date.now().toString(),
+    // Save to database
+    await supabase.from('request_events').insert({
       timestamp: Date.now(),
-      userAgent: selectedUA,
+      user_agent: selectedUA,
       endpoint: targetUrl,
       status: 'paid',
-      txHash,
+      tx_hash: txHash,
       amount: settings.priceWei,
     });
 
