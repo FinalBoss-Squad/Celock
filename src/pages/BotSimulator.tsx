@@ -64,7 +64,46 @@ const BotSimulator = () => {
     setTimeline([]);
     setPaymentStatus('none');
 
-    // Step 1: Initial Request
+    console.log('🚀 Starting simulation with protectionEnabled:', settings.protectionEnabled);
+
+    // If protection is off, skip straight to success
+    if (!settings.protectionEnabled) {
+      const step1: TimelineStep = {
+        id: '1',
+        title: 'Request Initiated',
+        description: `GET ${targetUrl}`,
+        status: 'complete',
+      };
+      setTimeline([step1]);
+      await new Promise(r => setTimeout(r, 500));
+
+      setTimeline(prev => [
+        ...prev,
+        {
+          id: '2',
+          title: '200 OK - Access Granted',
+          description: '🔓 Protection is OFF - All traffic allowed without payment',
+          status: 'complete',
+          data: { message: 'Access granted - protection disabled' },
+        },
+      ]);
+
+      await supabase.from('request_events').insert({
+        timestamp: Date.now(),
+        user_agent: selectedUA,
+        endpoint: targetUrl,
+        status: 'allowed',
+      });
+
+      setIsRunning(false);
+      toast({
+        title: "Access Granted",
+        description: "Protection is disabled - no payment required.",
+      });
+      return;
+    }
+
+    // Step 1: Initial Request (protection enabled)
     const step1: TimelineStep = {
       id: '1',
       title: 'Request Initiated',

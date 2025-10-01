@@ -44,16 +44,17 @@ export const mockApi = {
     data?: any;
     x402Metadata?: any;
   }> {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    // If protection is disabled, always allow access
+    // CRITICAL: If protection is disabled, return 200 immediately before any delays
     if (!protectionEnabled) {
+      console.log('🔓 Protection is OFF - allowing all traffic without payment');
       return {
         status: 200,
         data: { message: 'Access granted - protection disabled', content: 'Protected content here!' }
       };
     }
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Check if UA is in allowlist
     const isAllowlisted = allowlist.some(allowed => 
