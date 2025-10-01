@@ -2,6 +2,8 @@
 
 **Turn Bot Traffic into Revenue with Celo Micropayments.** *The plug-and-play firewall that makes bots pay their way, built on `x402 Standard`.*
 
+[1min Demo Video](https://youtu.be/dAo5LRQV0wQ)
+
 **🏆 A Hackathon ORIGINS @ TOKEN2049 Project**
 
 -----
