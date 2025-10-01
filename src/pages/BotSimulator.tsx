@@ -250,7 +250,9 @@ const BotSimulator = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Request Configuration</CardTitle>
-                <CardDescription>Simulate bot behavior</CardDescription>
+                <CardDescription>
+                  Simulate bot behavior - {settings.protectionEnabled ? 'Protection is active' : 'Protection disabled (all traffic allowed)'}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -304,6 +306,12 @@ const BotSimulator = () => {
 
 
                 <div className="p-3 bg-muted/30 rounded-lg space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Protection Status:</span>
+                    <Badge variant={settings.protectionEnabled ? 'destructive' : 'default'}>
+                      {settings.protectionEnabled ? '🔒 Enabled' : '🔓 Disabled'}
+                    </Badge>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Payment Required:</span>
                     <span className="font-semibold">
